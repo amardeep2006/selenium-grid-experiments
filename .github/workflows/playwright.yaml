@@ -36,7 +36,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: |
+      - name : Run Tests
+        run: |
           cd playwright
           npm ci
           SELENIUM_REMOTE_URL=http://localhost:4444 npx playwright test        

@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEBUG: pw:browser*
-      # This is a ephemeral environment so we donot care about creds, in real project we want to read it from secrets
-      SELENIUM_GRID_USERNAME: griduser
-      SELENIUM_GRID_PASSWORD: griduserStrongpwd
+      # In real project you also want to read it from secrets
+      SELENIUM_GRID_USERNAME: ${{ secrets.SELENIUM_GRID_USERNAME }}
+      SELENIUM_GRID_PASSWORD: ${{ secrets.SELENIUM_GRID_PASSWORD }}
     # Service containers to run with `runner-job`
     services:
       # Label used to access the service container
@@ -25,10 +25,10 @@ jobs:
         ports:
           # Opens tcp port 4444 on the host and service container
           - 4444:4444
-        # This is ephemeral grid so we donot care about credentials
+        # In real project you also want to read it from secrets
         env:
-          SE_OPTS_USERNAME: griduser
-          SE_OPTS_PASSWORD: griduserStrongpwd          
+          SE_OPTS_USERNAME: ${{ secrets.SELENIUM_GRID_USERNAME }}
+          SE_OPTS_PASSWORD: ${{ secrets.SELENIUM_GRID_PASSWORD }}          
         # Set health checks to wait until Grid has started
         options: >-
           --health-cmd "/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444"
@@ -43,7 +43,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: |
+      - name : Run Tests
+        run: |
           cd webdriverIO
           npm ci
           npm run wdio
