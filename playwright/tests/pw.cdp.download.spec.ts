@@ -5,19 +5,20 @@ const { v4: uuidv4 } = require('uuid');
 
 async function downloadFile(page, fileType) {
   // Enable CDP session
+  console.log('Fork CDP session.');
   const client = await page.context().newCDPSession(page);
-
+  console.log('Send CDP Page.setDownloadBehavior.');
   // Set downloadPath to a valid location on Grid Node
   await client.send('Page.setDownloadBehavior', {
     behavior: 'allow',
     downloadPath: '/home/seluser/Downloads'
   });
-
+  console.log('Send CDP Fetch.enable');
   // Setup request interception for your download, intercepting specific file types for demo
   await client.send('Fetch.enable', {
     patterns: [{ urlPattern: `*.${fileType}`, requestStage: 'Response' }]
   });
-
+  console.log('Send CDP Fetch.requestPaused');
   client.on('Fetch.requestPaused', async event => {
     const { requestId } = event;
     console.log(`Request "${requestId}" paused.`);
@@ -45,7 +46,7 @@ async function downloadFile(page, fileType) {
         if (streamEnd) {
           eof = true;
           fileStream.end();
-          console.log('Download complete!');
+          console.log('File Download complete via CDP Fetch!');
         }
       }
 
