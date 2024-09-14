@@ -1,4 +1,12 @@
 import type { Options } from '@wdio/types'
+// Read the username and password from environment variables
+const username = process.env.SELENIUM_GRID_USERNAME;
+const password = process.env.SELENIUM_GRID_PASSWORD;
+
+// Combine the username and password with a colon separator
+const credentials = `${username}:${password}`;
+// Encode the credentials using Base64
+const encodedCredentials = Buffer.from(credentials).toString('base64');
 export const config: Options.Testrunner = {
     //
     // ====================
@@ -21,7 +29,12 @@ export const config: Options.Testrunner = {
     protocol: 'http',
     hostname: 'localhost',
     port: 4444,
-    path: '/',
+    path: '/wd/hub',
+
+    // Headers for Grid Auth
+    headers: {
+        Authorization: `Basic ${encodedCredentials}`
+    },
     //
     // ==================
     // Specify Test Files
@@ -38,7 +51,8 @@ export const config: Options.Testrunner = {
     // of the config file unless it's absolute.
     //
     specs: [
-        './test/specs/**/*.ts'
+        // './test/specs/**/*.ts'
+        './features/**/*.feature'
     ],
     // Patterns to exclude.
     exclude: [

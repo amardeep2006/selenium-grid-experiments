@@ -1,0 +1,49 @@
+name: WebdrirIO
+on: 
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  # Label of the container job
+  runner-job:
+    # You must use a Linux environment when using service containers or container jobs
+    runs-on: ubuntu-latest
+    env:
+      DEBUG: pw:browser*
+      # This is a ephemeral environment so we donot care about creds, in real project we want to read it from secrets
+      SELENIUM_GRID_USERNAME: griduser
+      SELENIUM_GRID_PASSWORD: griduserStrongpwd
+    # Service containers to run with `runner-job`
+    services:
+      # Label used to access the service container
+      selenium-grid-standalone:
+        # Docker Hub image
+        image: selenium/standalone-chrome:4.24
+        #
+        ports:
+          # Opens tcp port 4444 on the host and service container
+          - 4444:4444
+        # This is ephemeral grid so we donot care about credentials
+        env:
+          SE_OPTS_USERNAME: griduser
+          SE_OPTS_PASSWORD: griduserStrongpwd          
+        # Set health checks to wait until Grid has started
+        options: >-
+          --health-cmd "/opt/bin/check-grid.sh --host 0.0.0.0 --port 4444"
+          --health-interval 15s
+          --health-timeout 30s
+          --health-retries 5
+
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          cd webdriverIO
+          npm ci
+          npm run wdio
