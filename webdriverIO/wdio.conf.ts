@@ -7,6 +7,20 @@ const password = process.env.SELENIUM_GRID_PASSWORD;
 const credentials = `${username}:${password}`;
 // Encode the credentials using Base64
 const encodedCredentials = Buffer.from(credentials).toString('base64');
+
+const chromeCapabilities = {
+    browserName: 'chrome',
+    'goog:chromeOptions': {
+        args: ['--ignore-certificate-errors']
+    },
+};
+
+let capability
+capability = { ...chromeCapabilities }
+//Added capability for selenium grid managed downloads.
+// https://webdriver.io/docs/api/browser/downloadFile/
+capability['se:downloadsEnabled'] = true
+
 export const config: Options.Testrunner = {
     //
     // ====================
@@ -80,9 +94,10 @@ export const config: Options.Testrunner = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://saucelabs.com/platform/platform-configurator
     //
-    capabilities: [{
-        browserName: 'chrome'
-    }],
+    capabilities: [capability],
+    // capabilities: [{
+    //     browserName: 'chrome'
+    // }],
 
     //
     // ===================
@@ -159,7 +174,7 @@ export const config: Options.Testrunner = {
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         // <string[]> (file/dir) require files before executing features
-        require: ['./features/step-definitions/steps.ts'],
+        require: ['./features/step-definitions/*.ts'],
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> ("extension:module") require files with the given EXTENSION after requiring MODULE (repeatable)
