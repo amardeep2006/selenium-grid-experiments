@@ -17,7 +17,7 @@ jobs:
       # Label used to access the service container
       selenium-grid-standalone:
         # Docker Hub image
-        image: selenium/standalone-chrome:4.24
+        image: selenium/standalone-chrome:4.35
         #
         ports:
           # Opens tcp port 4444 on the host and service container

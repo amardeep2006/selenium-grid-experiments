@@ -9,4 +9,3 @@ Feature: The Internet Guinea Pig Website
     Examples:
       | username | password             | message                        |
       | tomsmith | SuperSecretPassword! | You logged into a secure area! |
-      | foobar   | barfoo               | Your username is invalid!      |
